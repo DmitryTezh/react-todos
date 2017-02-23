@@ -10,7 +10,7 @@ import TodoFilter from '../components/TodoFilter';
 import TodoList from '../components/TodoList';
 import _ from 'lodash';
 
-class _TodoBox extends Component {
+class TodoBox extends Component {
     filterItem(priorityFilter, toggleFilter, item) {
         const priorityCheck = priorityFilter === actionTypes.PRIORITY_FILTERS.SHOW_ALL
             || (priorityFilter === actionTypes.PRIORITY_FILTERS.SHOW_HIGH && item.priority === actionTypes.PRIORITIES.HIGH )
@@ -43,7 +43,7 @@ class _TodoBox extends Component {
     }
 }
 
-_TodoBox.propTypes = {
+TodoBox.propTypes = {
     title: PropTypes.string.isRequired,
     todoState: PropTypes.shape({
         todosById: PropTypes.object.isRequired,
@@ -56,6 +56,6 @@ _TodoBox.propTypes = {
     dispatch: PropTypes.func.isRequired
 };
 
-const TodoBox = connect(state => ({todoState: state.todos, filterState: state.filters}))(_TodoBox);
-
-export default TodoBox;
+export default connect(state => ({
+    todoState: state.todos, filterState: state.filters
+}))(TodoBox);

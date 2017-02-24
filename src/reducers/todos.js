@@ -4,19 +4,51 @@
 import * as actionTypes from '../constants/actionTypes';
 import _ from 'lodash';
 
-const initialState = {
+/*
+const emptyState = {
+    todos: [],
+    todosById: {},
+    isFetching: false,
+    currentTodo: 0
+};
+*/
+const exampleState = {
     todos: [1,2,3],
     todosById: {
         1: {id: 1, priority: actionTypes.PRIORITIES.HIGH, text: 'VERY URGENT TASK', completed: false},
         2: {id: 2, priority: actionTypes.PRIORITIES.MEDIUM, text: 'URGENT TASK', completed: false},
         3: {id: 3, priority: actionTypes.PRIORITIES.LOW, text: 'NOT URGENT TASK', completed: false},
     },
+    isFetching: false,
     currentTodo: 0
 };
-let nextId = initialState.todos.length + 1;
+let nextId = exampleState.todos.length + 1;
 
-const todos = (state = initialState, action) => {
+const todos = (state = exampleState, action) => {
     switch (action.type) {
+        case actionTypes.LOAD_TODOS_REQUEST: {
+            return {
+                ...state,
+                isFetching: true
+            }
+        }
+        case actionTypes.LOAD_TODOS_SUCCESS: {
+            nextId = action.data.length + 1;
+            return {
+                ...state,
+                todos: _.map(action.data, item => item.id),
+                todosById: _.keyBy(action.data, item => item.id),
+                isFetching: false,
+                error: undefined
+            }
+        }
+        case actionTypes.LOAD_TODOS_FAILURE: {
+            return {
+                ...state,
+                isFetching: false,
+                error: action.error
+            }
+        }
         case actionTypes.ADD_TODO: {
             const newId = nextId++;
             return {

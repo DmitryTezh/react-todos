@@ -21,23 +21,32 @@ class TodoBox extends Component {
             || (toggleFilter === actionTypes.TOGGLE_FILTERS.SHOW_COMPLETED && item.completed);
         return priorityCheck && toggleCheck;
     }
+    componentDidMount() {
+        const {dispatch} = this.props;
+        dispatch(TodoActions.loadTodos());
+    }
     render() {
-        const {todoState: {todosById, currentTodo}, filterState: {priorityFilter, toggleFilter}, dispatch} = this.props;
+        const {todoState: {todosById, currentTodo, isFetching}, filterState: {priorityFilter, toggleFilter}, dispatch} = this.props;
         const actions = bindActionCreators(TodoActions, dispatch);
         const items = _.filter(todosById, item => this.filterItem(priorityFilter, toggleFilter, item));
 
         return (
             <div>
                 <h3>{this.props.title}</h3>
-                <TodoFilter
-                    priorityFilter={priorityFilter}
-                    toggleFilter={toggleFilter}
-                    actions={actions}/>
-                <TodoList
-                    items={items}
-                    currentId={currentTodo}
-                    actions={actions}
-                />
+                {isFetching && <h4>Loading...</h4>}
+                {!isFetching &&
+                <div>
+                    <TodoFilter
+                        priorityFilter={priorityFilter}
+                        toggleFilter={toggleFilter}
+                        actions={actions}/>
+                    <TodoList
+                        items={items}
+                        currentId={currentTodo}
+                        actions={actions}
+                    />
+                </div>
+                }
             </div>
         );
     }

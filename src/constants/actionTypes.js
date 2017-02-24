@@ -3,7 +3,7 @@
  */
 
 /*
- Action types
+    Action types
  */
 export const ADD_TODO = 'ADD_TODO';
 export const AMEND_TODO = 'AMEND_TODO';
@@ -12,14 +12,21 @@ export const TOGGLE_TODO = 'TOGGLE_TODO';
 export const REMOVE_TODO = 'REMOVE_TODO';
 
 /*
- Filter types
+    Fetching action types
+ */
+export const LOAD_TODOS_REQUEST = 'LOAD_TODOS_REQUEST';
+export const LOAD_TODOS_SUCCESS = 'LOAD_TODOS_SUCCESS';
+export const LOAD_TODOS_FAILURE = 'LOAD_TODOS_FAILURE';
+
+/*
+    Filter types
  */
 export const SET_PRIORITY_FILTER = 'PRIORITY_FILTER';
 export const SET_TOGGLE_FILTER = 'TOGGLE_FILTER';
 export const RESET_ALL_FILTERS = 'RESET_ALL_FILTERS';
 
 /*
- Priorities
+    Priorities enums
  */
 export const PRIORITIES = {
     HIGH: 1,

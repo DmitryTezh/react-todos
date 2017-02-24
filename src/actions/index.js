@@ -31,3 +31,11 @@ export const removeTodo = makeActionCreator(actionTypes.REMOVE_TODO, 'id');
 export const setPriorityFilter = makeActionCreator(actionTypes.SET_PRIORITY_FILTER, 'filter');
 export const setToggleFilter = makeActionCreator(actionTypes.SET_TOGGLE_FILTER, 'filter');
 export const resetAllFilters = makeActionCreator(actionTypes.RESET_ALL_FILTERS);
+
+/*
+    Fetching action creators
+ */
+export const loadTodos = () => ({
+    types: [actionTypes.LOAD_TODOS_REQUEST, actionTypes.LOAD_TODOS_SUCCESS, actionTypes.LOAD_TODOS_FAILURE],
+    fetchUrl: 'http://localhost:5000/api/todo' // `http://localhost:60833/api/todo`
+});

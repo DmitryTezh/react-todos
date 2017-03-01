@@ -2,7 +2,6 @@
  * Created by DIMOS on 11.02.2017.
  */
 import React, {PropTypes} from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
 
 const priorities = ["text-danger", "text-primary", "text-success"];
 const LabelItem = ({priority, children}) => <label className={priorities[priority - 1]}>{children}</label>;

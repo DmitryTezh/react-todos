@@ -3,7 +3,6 @@
  */
 import React, {Component, PropTypes} from 'react';
 import * as actionTypes from '../constants/actionTypes';
-import 'bootstrap/dist/css/bootstrap.css'
 
 class TodoInput extends Component {
     constructor(props) {

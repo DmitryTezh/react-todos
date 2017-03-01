@@ -21,7 +21,7 @@ function fetchMiddleware({getState, dispatch}) {
         if (typeof shouldFetch !== 'function') {
             throw new Error('Invalid fetchMiddleware usage: "shouldFetch" expected to be a function.');
         }
-        if (!shouldFetch(getState)) {
+        if (!shouldFetch(getState())) {
             return;
         }
 
@@ -29,16 +29,10 @@ function fetchMiddleware({getState, dispatch}) {
         dispatch({...payload, type: requestType});
 
         return fetch(fetchUrl).then(
-            response => response.json(),
+            response => response.json().then(json => dispatch({...payload, data: json, type: successType})),
             error => {
                 dispatch({...payload, error, type: failureType});
                 console.log(error);
-            }
-        ).then(
-            json => {
-                if (json) {
-                    dispatch({...payload, data: json, type: successType});
-                }
             }
         )
     }

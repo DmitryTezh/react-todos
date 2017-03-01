@@ -8,7 +8,7 @@ import * as actionTypes from '../constants/actionTypes';
 import * as TodoActions from '../actions';
 import TodoFilter from '../components/TodoFilter';
 import TodoList from '../components/TodoList';
-import _ from 'lodash';
+import filter from 'lodash/filter';
 
 class TodoBox extends Component {
     filterItem(priorityFilter, toggleFilter, item) {
@@ -22,19 +22,16 @@ class TodoBox extends Component {
         return priorityCheck && toggleCheck;
     }
     componentDidMount() {
-        const {dispatch} = this.props;
-        dispatch(TodoActions.loadTodos());
+        this.props.actions.loadTodos();
     }
     render() {
-        const {todoState: {todosById, currentTodo, isFetching}, filterState: {priorityFilter, toggleFilter}, dispatch} = this.props;
-        const actions = bindActionCreators(TodoActions, dispatch);
-        const items = _.filter(todosById, item => this.filterItem(priorityFilter, toggleFilter, item));
+        const {todoState: {todosById, currentTodo, isFetching}, filterState: {priorityFilter, toggleFilter}, actions} = this.props;
+        const items = filter(todosById, item => this.filterItem(priorityFilter, toggleFilter, item));
 
         return (
             <div>
                 <h3>{this.props.title}</h3>
                 {isFetching && <h4>Loading...</h4>}
-                {!isFetching &&
                 <div>
                     <TodoFilter
                         priorityFilter={priorityFilter}
@@ -46,7 +43,7 @@ class TodoBox extends Component {
                         actions={actions}
                     />
                 </div>
-                }
+                {!isFetching && items.length === 0 && <h4>Nothing todo</h4>}
             </div>
         );
     }
@@ -62,9 +59,10 @@ TodoBox.propTypes = {
         priorityFilter: PropTypes.string.isRequired,
         toggleFilter: PropTypes.string.isRequired
     }).isRequired,
-    dispatch: PropTypes.func.isRequired
+    actions: PropTypes.objectOf(PropTypes.func.isRequired).isRequired
 };
 
-export default connect(state => ({
-    todoState: state.todos, filterState: state.filters
-}))(TodoBox);
+export default connect(
+    state => ({todoState: state.todos, filterState: state.filters}),
+    dispatch => ({actions: bindActionCreators(TodoActions, dispatch)})
+)(TodoBox);

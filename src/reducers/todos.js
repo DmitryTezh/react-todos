@@ -2,17 +2,19 @@
  * Created by DIMOS on 18.02.2017.
  */
 import * as actionTypes from '../constants/actionTypes';
-import _ from 'lodash';
+import map from 'lodash/map';
+import mapValues from 'lodash/mapValues';
+import keyBy from 'lodash/keyBy';
+import omit from 'lodash/omit';
 
-/*
-const emptyState = {
+const initialState = {
     todos: [],
     todosById: {},
     isFetching: false,
     currentTodo: 0
 };
-*/
-const exampleState = {
+/*
+const initialState = {
     todos: [1,2,3],
     todosById: {
         1: {id: 1, priority: actionTypes.PRIORITIES.HIGH, text: 'VERY URGENT TASK', completed: false},
@@ -22,9 +24,10 @@ const exampleState = {
     isFetching: false,
     currentTodo: 0
 };
-let nextId = exampleState.todos.length + 1;
+*/
+let nextId = initialState.todos.length + 1;
 
-const todos = (state = exampleState, action) => {
+const todos = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.LOAD_TODOS_REQUEST: {
             return {
@@ -36,8 +39,8 @@ const todos = (state = exampleState, action) => {
             nextId = action.data.length + 1;
             return {
                 ...state,
-                todos: _.map(action.data, item => item.id),
-                todosById: _.keyBy(action.data, item => item.id),
+                todos: map(action.data, item => item.id),
+                todosById: keyBy(action.data, item => item.id),
                 isFetching: false,
                 error: undefined
             }
@@ -63,7 +66,7 @@ const todos = (state = exampleState, action) => {
         case actionTypes.AMEND_TODO: {
             return {
                 ...state,
-                todosById: _.mapValues(state.todosById, todo => {
+                todosById: mapValues(state.todosById, todo => {
                     return todo.id === action.id ? {...todo, priority: action.priority, text: action.text} : todo
                 }),
                 currentTodo: 0
@@ -78,7 +81,7 @@ const todos = (state = exampleState, action) => {
         case actionTypes.TOGGLE_TODO: {
             return {
                 ...state,
-                todosById: _.mapValues(state.todosById, todo => {
+                todosById: mapValues(state.todosById, todo => {
                     return todo.id === action.id ? {...todo, completed: !todo.completed} : todo
                 })
             }
@@ -87,7 +90,7 @@ const todos = (state = exampleState, action) => {
             return {
                 ...state,
                 todos: state.todos.filter(todo => todo.id !== action.id),
-                todosById: _.omit(state.todosById, action.id)
+                todosById: omit(state.todosById, action.id)
             }
         }
         default:

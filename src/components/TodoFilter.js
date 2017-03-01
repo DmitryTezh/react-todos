@@ -3,7 +3,6 @@
  */
 import React, {PropTypes} from 'react';
 import * as actionTypes from '../constants/actionTypes';
-import 'bootstrap/dist/css/bootstrap.css';
 
 const TodoFilter = ({priorityFilter, toggleFilter, actions}) => (
     <div className="form-inline">

@@ -5,9 +5,9 @@ import {combineReducers} from 'redux';
 import todos from './todos';
 import filters from './filters';
 
-const appReducers = combineReducers({
+const rootReducer = combineReducers({
     todos,
     filters
 });
 
-export default appReducers;
+export default rootReducer;

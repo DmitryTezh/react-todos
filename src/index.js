@@ -1,17 +1,15 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import {createStore, applyMiddleware} from 'redux';
-import {composeWithDevTools} from 'redux-devtools-extension/developmentOnly';
+import {render} from 'react-dom'
 import {Provider} from 'react-redux';
-import reducers from './reducers';
-import fetchMiddleware from './middlewares/fetchMiddleware'
+import configureStore from './store/configureStore'
 import App from './containers/App';
 import TodoBox from './containers/TodoBox';
+//import DevTools from './containers/DevTools';
 import './index.css';
 
-let store = createStore(reducers, composeWithDevTools(applyMiddleware(fetchMiddleware)));
+const store = configureStore();
 
-ReactDOM.render(
+render(
     <Provider store={store}>
         <App>
             <TodoBox title="My Tasks"/>

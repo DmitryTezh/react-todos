@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 import * as TodoActions from '../actions';
 import TodoFilter from '../components/TodoFilter';
 import TodoList from '../components/TodoList';
-import {getFilteredTodos} from '../selectors';
+import {selectTodos} from '../selectors';
 
 class TodoBox extends Component {
     componentDidMount() {
@@ -52,7 +52,7 @@ TodoBox.propTypes = {
 
 const mapStateToProps = (state) => {
     return {
-        todos: getFilteredTodos(state),
+        todos: selectTodos(state),
         currentTodo: state.todos.currentTodo,
         isFetching: state.todos.isFetching,
         priorityFilter: state.filters.priorityFilter,

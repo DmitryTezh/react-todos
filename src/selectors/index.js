@@ -5,8 +5,8 @@ import {createSelector} from 'reselect';
 import * as actionTypes from '../constants/actionTypes';
 import filter from 'lodash/filter';
 
-const getFilters = (state) => state.filters;
-const getTodos = (state) => state.todos.todosById;
+const filterSelector = (state) => state.filters;
+const todoSelector = (state) => state.todos.todosById;
 
 const filterItem = (priorityFilter, toggleFilter, item) => {
     const priorityCheck = priorityFilter === actionTypes.PRIORITY_FILTERS.SHOW_ALL
@@ -19,7 +19,7 @@ const filterItem = (priorityFilter, toggleFilter, item) => {
     return priorityCheck && toggleCheck;
 };
 
-export const getFilteredTodos = createSelector(
-    [getFilters, getTodos],
+export const selectTodos = createSelector(
+    [filterSelector, todoSelector],
     (filters, todos) => filter(todos, item => filterItem(filters.priorityFilter, filters.toggleFilter, item))
 );

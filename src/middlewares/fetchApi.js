@@ -3,7 +3,7 @@
  */
 import 'isomorphic-fetch';
 
-function fetchMiddleware({getState, dispatch}) {
+function fetchApi({getState, dispatch}) {
     return next => action => {
         const {types, fetchUrl, shouldFetch = () => true, payload = {}} = action;
         if (!types) {
@@ -30,12 +30,9 @@ function fetchMiddleware({getState, dispatch}) {
 
         return fetch(fetchUrl).then(
             response => response.json().then(json => dispatch({...payload, data: json, type: successType})),
-            error => {
-                dispatch({...payload, error, type: failureType});
-                console.log(error);
-            }
+            error => dispatch({...payload, error, type: failureType})
         )
     }
 }
 
-export default fetchMiddleware;
+export default fetchApi;

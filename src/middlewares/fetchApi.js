@@ -2,10 +2,11 @@
  * Created by DIMOS on 23.02.2017.
  */
 import 'isomorphic-fetch';
+import forEach from 'lodash/forEach';
 
 function fetchApi({getState, dispatch}) {
     return next => action => {
-        const {types, fetchUrl, shouldFetch = () => true, payload = {}} = action;
+        const {types, fetchUrl, method = 'get', shouldFetch = () => true, payload = {}} = action;
         if (!types) {
             return next(action);
         }
@@ -26,12 +27,25 @@ function fetchApi({getState, dispatch}) {
         }
 
         const [requestType, successType, failureType] = types;
-        dispatch({...payload, type: requestType});
+        dispatch({type: requestType, ...payload});
 
-        return fetch(fetchUrl).then(
-            response => response.json().then(json => dispatch({...payload, data: json, type: successType})),
-            error => dispatch({...payload, error, type: failureType})
-        )
+        if (method === 'get') {
+            return fetch(fetchUrl).then(
+                response => response.json().then(data => dispatch({type: successType, data})),
+                error => dispatch({type: failureType, error})
+            )
+        }
+        else {
+            const form = new FormData();
+            forEach(payload, (value, key) => form.append(key, value));
+            return fetch(fetchUrl, {
+                method,
+                body: form
+            }).then(
+                response => response.json().then(data => dispatch({type: successType, data})),
+                error => dispatch({type: failureType, error})
+            )
+        }
     }
 }
 

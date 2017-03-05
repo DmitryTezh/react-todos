@@ -3,18 +3,17 @@
  */
 import 'isomorphic-fetch';
 import forEach from 'lodash/forEach';
+import * as actionTypes from '../constants/actionTypes';
 
 function fetchApi({getState, dispatch}) {
     return next => action => {
-        const {types, fetchUrl, method = 'get', shouldFetch = () => true, payload = {}} = action;
-        if (!types) {
+        const {fetchType, fetchUrl, fetchMethod = 'get', shouldFetch = () => true, payload = {}} = action;
+        if (!fetchType) {
             return next(action);
         }
 
-        if (!Array.isArray(types)
-            || types.length !== 3
-            || !types.every(type => typeof type === 'string')) {
-            throw new Error('Invalid fetchMiddleware usage: "types" expected to be an array of three string types.');
+        if (typeof fetchType !== 'string') {
+            throw new Error('Invalid fetchMiddleware usage: "fetchType" expected to be a string.');
         }
         if (typeof fetchUrl !== 'string') {
             throw new Error('Invalid fetchMiddleware usage: "fetchUrl" expected to be a string.');
@@ -26,24 +25,31 @@ function fetchApi({getState, dispatch}) {
             return;
         }
 
-        const [requestType, successType, failureType] = types;
-        dispatch({type: requestType, ...payload});
+        dispatch({type: actionTypes.toRequestType(fetchType), ...payload});
 
-        if (method === 'get') {
+        if (fetchMethod === 'get') {
             return fetch(fetchUrl).then(
-                response => response.json().then(data => dispatch({type: successType, data})),
-                error => dispatch({type: failureType, error})
+                response => response.json().then(data => dispatch({type: actionTypes.toSuccessType(fetchType), data, ...payload})),
+                error => dispatch({type: actionTypes.toFailureType(fetchType), error, ...payload})
+            )
+        }
+        else if (fetchMethod === 'delete') {
+            return fetch(fetchUrl, {
+                method: fetchMethod
+            }).then(
+                response => dispatch({type: actionTypes.toSuccessType(fetchType), ...payload}),
+                error => dispatch({type: actionTypes.toFailureType(fetchType), error, ...payload})
             )
         }
         else {
-            const form = new FormData();
-            forEach(payload, (value, key) => form.append(key, value));
+            const formData = new FormData();
+            forEach(payload, (value, key) => formData.append(key, value));
             return fetch(fetchUrl, {
-                method,
-                body: form
+                method: fetchMethod,
+                body: formData //JSON.stringify(payload)
             }).then(
-                response => response.json().then(data => dispatch({type: successType, data})),
-                error => dispatch({type: failureType, error})
+                response => response.json().then(data => dispatch({type: actionTypes.toSuccessType(fetchType), data, ...payload})),
+                error => dispatch({type: actionTypes.toFailureType(fetchType), error, ...payload})
             )
         }
     }
